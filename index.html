@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FISCUS — Sistema de Gestão de Estudos para Concursos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --azul:    #0A1628;
+  --azul2:   #0F2040;
+  --azul3:   #162D52;
+  --ouro:    #C9A84C;
+  --ouro2:   #E8C96A;
+  --ciano:   #00D2FF;
+  --texto:   #E2E8F0;
+  --suave:   #94A3B8;
+  --borda:   rgba(201,168,76,0.15);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--azul);
+  color:var(--texto);
+  overflow-x:hidden;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 2.5rem;
+  background:rgba(10,22,40,0.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--borda);
+}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:4px;color:var(--ouro);}
+.nav-btn{
+  padding:.6rem 1.5rem;
+  background:var(--ouro);color:var(--azul);
+  border:none;border-radius:6px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:1px;
+  cursor:pointer;transition:background .2s;text-decoration:none;
+}
+.nav-btn:hover{background:var(--ouro2);}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:8rem 2rem 4rem;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;
+  width:800px;height:800px;
+  background:radial-gradient(circle, rgba(0,210,255,0.06) 0%, transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);
+  padding:.4rem 1.2rem;border-radius:20px;
+  font-size:.78rem;color:var(--ouro);letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:2rem;
+}
+.hero h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.8rem,7vw,5.5rem);
+  font-weight:800;
+  line-height:1.05;
+  letter-spacing:-1px;
+  margin-bottom:1.5rem;
+  max-width:800px;
+}
+.hero h1 span{color:var(--ouro);}
+.hero p{
+  font-size:1.15rem;color:var(--suave);
+  max-width:520px;line-height:1.7;
+  margin-bottom:3rem;
+}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;}
+.btn-primary{
+  padding:1rem 2.5rem;
+  background:var(--ouro);color:var(--azul);
+  border:none;border-radius:8px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1px;
+  cursor:pointer;transition:all .2s;text-decoration:none;
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.btn-primary:hover{background:var(--ouro2);transform:translateY(-2px);}
+.btn-secondary{
+  padding:1rem 2.5rem;
+  background:transparent;color:var(--texto);
+  border:1px solid rgba(255,255,255,0.15);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:1rem;
+  cursor:pointer;transition:all .2s;text-decoration:none;
+}
+.btn-secondary:hover{border-color:var(--ouro);color:var(--ouro);}
+.hero-stats{
+  display:flex;gap:3rem;margin-top:4rem;
+  flex-wrap:wrap;justify-content:center;
+}
+.stat-item{text-align:center;}
+.stat-num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--ouro);}
+.stat-label{font-size:.8rem;color:var(--suave);letter-spacing:1px;text-transform:uppercase;margin-top:.25rem;}
+
+/* ── SEÇÃO GENÉRICA ── */
+section{padding:6rem 2rem;}
+.container{max-width:1100px;margin:0 auto;}
+.section-tag{
+  font-size:.75rem;color:var(--ciano);letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:1rem;font-family:'Syne',sans-serif;
+}
+.section-title{
+  font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);
+  font-weight:800;line-height:1.15;margin-bottom:1.25rem;
+}
+.section-title span{color:var(--ouro);}
+.section-sub{font-size:1.05rem;color:var(--suave);max-width:560px;line-height:1.7;}
+
+/* ── PROBLEMA ── */
+.problema{background:var(--azul2);}
+.problema-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1.5rem;margin-top:3rem;
+}
+.problema-card{
+  background:var(--azul3);border:1px solid var(--borda);
+  border-radius:12px;padding:1.75rem;
+}
+.problema-card .icone{font-size:2rem;margin-bottom:1rem;}
+.problema-card h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.6rem;}
+.problema-card p{font-size:.9rem;color:var(--suave);line-height:1.6;}
+
+/* ── FUNCIONALIDADES ── */
+.features-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:1.5rem;margin-top:3rem;
+}
+.feature-card{
+  background:var(--azul2);
+  border:1px solid var(--borda);
+  border-radius:12px;padding:2rem;
+  transition:border-color .2s, transform .2s;
+}
+.feature-card:hover{border-color:var(--ouro);transform:translateY(-4px);}
+.feature-icon{
+  width:48px;height:48px;border-radius:10px;
+  background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;margin-bottom:1.25rem;
+}
+.feature-card h3{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:.6rem;}
+.feature-card p{font-size:.88rem;color:var(--suave);line-height:1.6;}
+
+/* ── MOCKUP ── */
+.mockup-section{background:var(--azul2);}
+.mockup-wrap{
+  margin-top:3rem;
+  background:var(--azul3);border:1px solid var(--borda);
+  border-radius:16px;overflow:hidden;
+}
+.mockup-bar{
+  background:rgba(0,0,0,0.3);padding:.75rem 1rem;
+  display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--borda);
+}
+.dot{width:10px;height:10px;border-radius:50%;}
+.mockup-content{
+  padding:2rem;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;
+}
+.mock-stat{
+  background:var(--azul);border:1px solid var(--borda);
+  border-radius:10px;padding:1.25rem;text-align:center;
+}
+.mock-stat .num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--ouro);}
+.mock-stat .lbl{font-size:.75rem;color:var(--suave);text-transform:uppercase;letter-spacing:1px;margin-top:.25rem;}
+.mock-bar-wrap{grid-column:1/-1;background:var(--azul);border:1px solid var(--borda);border-radius:10px;padding:1.25rem;}
+.mock-bar-title{font-size:.8rem;color:var(--suave);margin-bottom:.75rem;}
+.mock-bar-item{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem;}
+.mock-bar-label{font-size:.78rem;width:120px;color:var(--texto);}
+.mock-bar-track{flex:1;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;}
+.mock-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ciano),var(--ouro));}
+.mock-bar-pct{font-size:.75rem;color:var(--suave);width:36px;text-align:right;}
+
+/* ── PREÇO ── */
+.preco-wrap{
+  display:flex;justify-content:center;margin-top:3rem;
+}
+.preco-card{
+  background:var(--azul2);border:2px solid var(--ouro);
+  border-radius:16px;padding:3rem 3.5rem;
+  text-align:center;max-width:440px;width:100%;
+  position:relative;overflow:hidden;
+}
+.preco-card::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;
+  background:radial-gradient(circle,rgba(201,168,76,0.1),transparent 70%);
+}
+.preco-badge{
+  display:inline-block;
+  background:var(--ouro);color:var(--azul);
+  padding:.3rem 1rem;border-radius:20px;
+  font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:1px;
+  margin-bottom:1.5rem;text-transform:uppercase;
+}
+.preco-valor{
+  font-family:'Syne',sans-serif;font-size:4rem;font-weight:800;color:var(--ouro);
+  line-height:1;
+}
+.preco-valor sup{font-size:1.5rem;vertical-align:top;margin-top:.5rem;}
+.preco-periodo{font-size:.9rem;color:var(--suave);margin:.5rem 0 2rem;}
+.preco-lista{text-align:left;margin-bottom:2rem;}
+.preco-item{
+  display:flex;align-items:center;gap:.75rem;
+  font-size:.9rem;color:var(--suave);
+  padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.preco-item:last-child{border-bottom:none;}
+.preco-item span:first-child{color:var(--ouro);font-size:1rem;}
+.garantia{
+  margin-top:1.5rem;font-size:.8rem;color:var(--suave);
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+}
+
+/* ── REQUISITOS ── */
+.req-grid{
+  display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:2rem;
+}
+.req-item{
+  background:var(--azul2);border:1px solid var(--borda);
+  border-radius:8px;padding:1rem 1.5rem;
+  font-size:.9rem;display:flex;align-items:center;gap:.6rem;
+}
+.req-item span:first-child{color:var(--ciano);}
+
+/* ── RODAPÉ ── */
+footer{
+  background:var(--azul2);border-top:1px solid var(--borda);
+  padding:3rem 2rem;text-align:center;
+}
+.footer-logo{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:4px;color:var(--ouro);margin-bottom:.5rem;}
+.footer-sub{font-size:.8rem;color:var(--suave);margin-bottom:1.5rem;}
+.footer-links{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+.footer-links a{font-size:.85rem;color:var(--suave);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--ouro);}
+.footer-copy{font-size:.78rem;color:rgba(148,163,184,0.5);}
+
+/* ── ANIMAÇÕES ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.hero-badge{animation:fadeUp .6s ease both;}
+.hero h1{animation:fadeUp .7s .1s ease both;}
+.hero p{animation:fadeUp .7s .2s ease both;}
+.hero-cta{animation:fadeUp .7s .3s ease both;}
+.hero-stats{animation:fadeUp .7s .4s ease both;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">FISCUS</div>
+  <a href="https://pay.kirvano.com/9f25e902-1f69-47aa-95b4-fe60d46949a4" class="nav-btn">Comprar agora</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🎯 Early Adopter — Oferta limitada</div>
+  <h1>Gerencie seus estudos.<br><span>Conquiste sua aprovação.</span></h1>
+  <p>O FISCUS transforma sua preparação para concursos fiscais em um sistema inteligente de gestão — horas, questões, revisões e diagnósticos em um só lugar.</p>
+  <div class="hero-cta">
+    <a href="https://pay.kirvano.com/9f25e902-1f69-47aa-95b4-fe60d46949a4" class="btn-primary">🚀 Quero o FISCUS por R$147</a>
+    <a href="#funcionalidades" class="btn-secondary">Ver funcionalidades</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Offline</div></div>
+    <div class="stat-item"><div class="stat-num">Windows</div><div class="stat-label">Nativo</div></div>
+    <div class="stat-item"><div class="stat-num">1 ano</div><div class="stat-label">de licença</div></div>
+    <div class="stat-item"><div class="stat-num">7 dias</div><div class="stat-label">de garantia</div></div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="container">
+    <div class="section-tag">O problema</div>
+    <h2 class="section-title">Você estuda muito mas <span>não sabe se está evoluindo</span></h2>
+    <p class="section-sub">A maioria dos concurseiros não tem controle real sobre sua preparação. Resultado: esforço sem direção.</p>
+    <div class="problema-grid">
+      <div class="problema-card"><div class="icone">📊</div><h3>Sem métricas reais</h3><p>Você não sabe quantas horas estudou, quais disciplinas estão fracas ou qual sua taxa de acerto.</p></div>
+      <div class="problema-card"><div class="icone">🔁</div><h3>Revisões perdidas</h3><p>Conteúdo estudado e esquecido porque não existe sistema de revisão espaçada organizado.</p></div>
+      <div class="problema-card"><div class="icone">📝</div><h3>Questões sem análise</h3><p>Faz questões mas não sabe quais assuntos mais erra ou onde focar para melhorar rápido.</p></div>
+      <div class="problema-card"><div class="icone">🗂️</div><h3>Tudo espalhado</h3><p>Planilhas, cadernos, apps separados. Nenhuma visão integrada da sua preparação.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section id="funcionalidades">
+  <div class="container">
+    <div class="section-tag">Solução</div>
+    <h2 class="section-title">Tudo que você precisa <span>em um só lugar</span></h2>
+    <p class="section-sub">O FISCUS foi desenvolvido especificamente para concurseiros que levam a aprovação a sério.</p>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">📅</div><h3>Gestão de Estudos</h3><p>Registre suas sessões de estudo, controle horas por disciplina e acompanhe sua evolução diária com gráficos.</p></div>
+      <div class="feature-card"><div class="feature-icon">✏️</div><h3>Controle de Questões</h3><p>Registre questões resolvidas, taxa de acerto por assunto e identifique exatamente onde precisa melhorar.</p></div>
+      <div class="feature-card"><div class="feature-icon">🔄</div><h3>Revisão Espaçada</h3><p>Sistema automático de revisões em 30, 60 e 90 dias para fixar o conteúdo de forma permanente.</p></div>
+      <div class="feature-card"><div class="feature-icon">🧠</div><h3>Diagnóstico Inteligente</h3><p>O FISCUS analisa seus dados e aponta prioridades, pontos fracos e o que você deve estudar agora.</p></div>
+      <div class="feature-card"><div class="feature-icon">📈</div><h3>Relatórios Detalhados</h3><p>Visualize sua evolução com gráficos de horas, acertos, comparativos por período e muito mais.</p></div>
+      <div class="feature-card"><div class="feature-icon">💾</div><h3>100% Offline e Seguro</h3><p>Seus dados ficam no seu computador. Nenhuma informação de estudo é enviada para servidores externos.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MOCKUP -->
+<section class="mockup-section">
+  <div class="container">
+    <div class="section-tag">Interface</div>
+    <h2 class="section-title">Simples, rápido e <span>poderoso</span></h2>
+    <div class="mockup-wrap">
+      <div class="mockup-bar">
+        <div class="dot" style="background:#e05555"></div>
+        <div class="dot" style="background:#c9a84c"></div>
+        <div class="dot" style="background:#4caf7d"></div>
+        <span style="font-size:.75rem;color:#555;margin-left:.5rem">FISCUS — Concursos Fiscais</span>
+      </div>
+      <div class="mockup-content">
+        <div class="mock-stat"><div class="num">342h</div><div class="lbl">Total estudado</div></div>
+        <div class="mock-stat"><div class="num">78%</div><div class="lbl">Taxa de acerto</div></div>
+        <div class="mock-stat"><div class="num">12</div><div class="lbl">Revisões pendentes</div></div>
+        <div class="mock-bar-wrap">
+          <div class="mock-bar-title">Horas por disciplina</div>
+          <div class="mock-bar-item"><span class="mock-bar-label">Direito Tributário</span><div class="mock-bar-track"><div class="mock-bar-fill" style="width:82%"></div></div><span class="mock-bar-pct">82h</span></div>
+          <div class="mock-bar-item"><span class="mock-bar-label">Contabilidade</span><div class="mock-bar-track"><div class="mock-bar-fill" style="width:65%"></div></div><span class="mock-bar-pct">65h</span></div>
+          <div class="mock-bar-item"><span class="mock-bar-label">Legislação Fiscal</span><div class="mock-bar-track"><div class="mock-bar-fill" style="width:48%"></div></div><span class="mock-bar-pct">48h</span></div>
+          <div class="mock-bar-item"><span class="mock-bar-label">Português</span><div class="mock-bar-track"><div class="mock-bar-fill" style="width:35%"></div></div><span class="mock-bar-pct">35h</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREÇO -->
+<section id="preco">
+  <div class="container">
+    <div class="section-tag">Investimento</div>
+    <h2 class="section-title" style="text-align:center">Preço de <span>early adopter</span></h2>
+    <p class="section-sub" style="margin:0 auto 0;text-align:center">Primeiros clientes têm condições especiais. Essa oferta é limitada.</p>
+    <div class="preco-wrap">
+      <div class="preco-card">
+        <div class="preco-badge">🔥 Early Adopter</div>
+        <div class="preco-valor"><sup>R$</sup>147</div>
+        <div class="preco-periodo">por ano · ou 6x de R$24,50</div>
+        <div class="preco-lista">
+          <div class="preco-item"><span>✓</span><span>Licença anual completa</span></div>
+          <div class="preco-item"><span>✓</span><span>Todas as funcionalidades incluídas</span></div>
+          <div class="preco-item"><span>✓</span><span>Atualizações gratuitas durante a vigência</span></div>
+          <div class="preco-item"><span>✓</span><span>Suporte por e-mail</span></div>
+          <div class="preco-item"><span>✓</span><span>Uso em até 2 computadores</span></div>
+          <div class="preco-item"><span>✓</span><span>100% offline — seus dados são seus</span></div>
+        </div>
+        <a href="https://pay.kirvano.com/9f25e902-1f69-47aa-95b4-fe60d46949a4" class="btn-primary" style="width:100%;justify-content:center;font-size:1rem;">
+          🚀 Quero o FISCUS agora
+        </a>
+        <div class="garantia">🛡️ 7 dias de garantia incondicional</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REQUISITOS -->
+<section style="padding:3rem 2rem;background:var(--azul2);">
+  <div class="container">
+    <div class="section-tag">Requisitos</div>
+    <h3 style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.5rem">Compatibilidade</h3>
+    <div class="req-grid">
+      <div class="req-item"><span>🖥️</span><span>Windows 10 ou superior</span></div>
+      <div class="req-item"><span>💾</span><span>200 MB de espaço livre</span></div>
+      <div class="req-item"><span>🌐</span><span>Internet apenas para ativar a licença</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- RODAPÉ -->
+<footer>
+  <div class="footer-logo">FISCUS</div>
+  <div class="footer-sub">Sistema de Gestão de Estudos para Concursos</div>
+  <div class="footer-links">
+    <a href="#">Termos de Uso</a>
+    <a href="#">Política de Privacidade</a>
+    <a href="mailto:fiscusconcursos@gmail.com">fiscusconcursos@gmail.com</a>
+  </div>
+  <div class="footer-copy">© 2026 FISCUS · Desenvolvido por Pablo Almeida · Todos os direitos reservados</div>
+</footer>
+
+</body>
+</html>
