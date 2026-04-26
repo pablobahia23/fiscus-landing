@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FISCUS — Concursos Públicos</title>
+  <meta name="description" content="O sistema de gestão de estudos feito para quem leva concurso a sério. Organize, evolua e seja aprovado.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul-escuro: #0F3460;
+      --azul-medio: #1a4a80;
+      --azul-claro: #4FC3F7;
+      --azul-brilho: #81d4fa;
+      --branco: #ffffff;
+      --cinza-claro: #e8f4fd;
+      --cinza-texto: #b0c4d8;
+      --preto: #060d18;
+      --gradiente: linear-gradient(135deg, #0F3460 0%, #0a2444 60%, #061628 100%);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--preto);
+      color: var(--branco);
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(6, 13, 24, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(79, 195, 247, 0.08);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: 0.08em;
+      color: var(--branco);
+    }
+
+    .nav-logo span {
+      color: var(--azul-claro);
+    }
+
+    .nav-cta {
+      background: var(--azul-claro);
+      color: var(--azul-escuro);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      padding: 0.6rem 1.4rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .nav-cta:hover {
+      background: var(--azul-brilho);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(79, 195, 247, 0.4);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 8rem 4rem 4rem;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--gradiente);
+      z-index: -1;
+    }
+
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 50%, rgba(79,195,247,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(15,52,96,0.8) 0%, transparent 70%);
+    }
+
+    /* Grid lines decorativas */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(79,195,247,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,195,247,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(79, 195, 247, 0.1);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      border-radius: 100px;
+      padding: 0.4rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--azul-claro);
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--azul-claro);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--azul-claro);
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--cinza-texto);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--azul-claro);
+      color: var(--azul-escuro);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.9rem 2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.25s;
+      box-shadow: 0 0 0 rgba(79,195,247,0);
+    }
+
+    .btn-primary:hover {
+      background: var(--azul-brilho);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(79, 195, 247, 0.45);
+    }
+
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover svg { transform: translateX(3px); }
+
+    .hero-note {
+      font-size: 0.82rem;
+      color: var(--cinza-texto);
+      opacity: 0.7;
+    }
+
+    /* Número flutuante decorativo */
+    .hero-stat {
+      position: absolute;
+      right: 4rem;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: right;
+      animation: fadeUp 0.6s 0.4s ease both;
+      z-index: 1;
+    }
+
+    .hero-stat-number {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(5rem, 10vw, 9rem);
+      line-height: 1;
+      color: rgba(79,195,247,0.07);
+      letter-spacing: -0.04em;
+      user-select: none;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SEÇÃO PROBLEMA ── */
+    .section {
+      padding: 6rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--azul-claro);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+    }
+
+    .section-title em {
+      font-style: normal;
+      color: var(--azul-claro);
+    }
+
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--cinza-texto);
+      line-height: 1.7;
+      max-width: 520px;
+    }
+
+    /* ── PROBLEMA ── */
+    .problema {
+      background: rgba(15, 52, 96, 0.2);
+      border-top: 1px solid rgba(79,195,247,0.08);
+      border-bottom: 1px solid rgba(79,195,247,0.08);
+    }
+
+    .problema-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .dores {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-top: 2.5rem;
+    }
+
+    .dor-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.2rem 1.4rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .dor-item:hover {
+      border-color: rgba(79,195,247,0.2);
+    }
+
+    .dor-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .dor-texto {
+      font-size: 0.95rem;
+      color: var(--cinza-texto);
+      line-height: 1.5;
+    }
+
+    .dor-texto strong {
+      color: var(--branco);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    /* Divisor visual */
+    .divisor {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin: 0 auto;
+      max-width: 600px;
+      padding: 3rem 4rem;
+    }
+
+    .divisor-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(79,195,247,0.3), transparent);
+    }
+
+    .divisor-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      color: var(--azul-claro);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    /* ── FUNCIONALIDADES ── */
+    .features {
+      background: var(--preto);
+    }
+
+    .features-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 4rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(15, 52, 96, 0.25);
+      border: 1px solid rgba(79,195,247,0.1);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--azul-claro), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(79,195,247,0.3);
+      background: rgba(15, 52, 96, 0.4);
+      transform: translateY(-4px);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .feature-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.7rem;
+      color: var(--branco);
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--cinza-texto);
+      line-height: 1.6;
+    }
+
+    /* ── DIFERENCIAL ── */
+    .diferencial {
+      background: rgba(15, 52, 96, 0.15);
+      border-top: 1px solid rgba(79,195,247,0.08);
+    }
+
+    .diferencial-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .diferencial-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .dif-item {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .dif-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      color: rgba(79,195,247,0.2);
+      line-height: 1;
+      min-width: 2.5rem;
+    }
+
+    .dif-content strong {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--branco);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .dif-content span {
+      font-size: 0.9rem;
+      color: var(--cinza-texto);
+      line-height: 1.5;
+    }
+
+    /* Card de destaque */
+    .destaque-card {
+      background: linear-gradient(135deg, rgba(79,195,247,0.08) 0%, rgba(15,52,96,0.5) 100%);
+      border: 1px solid rgba(79,195,247,0.2);
+      border-radius: 16px;
+      padding: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .destaque-card::after {
+      content: 'FISCUS';
+      position: absolute;
+      bottom: -1rem;
+      right: -1rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 5rem;
+      color: rgba(79,195,247,0.04);
+      letter-spacing: -0.04em;
+      user-select: none;
+    }
+
+    .destaque-quote {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      line-height: 1.4;
+      color: var(--branco);
+      margin-bottom: 1.5rem;
+    }
+
+    .destaque-quote em {
+      font-style: normal;
+      color: var(--azul-claro);
+    }
+
+    .destaque-detalhe {
+      font-size: 0.9rem;
+      color: var(--cinza-texto);
+      line-height: 1.7;
+    }
+
+    /* ── PREÇO ── */
+    .preco {
+      background: var(--preto);
+    }
+
+    .preco-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .preco-cards {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .preco-card {
+      background: rgba(15,52,96,0.25);
+      border: 1px solid rgba(79,195,247,0.1);
+      border-radius: 12px;
+      padding: 2.5rem;
+      text-align: left;
+      position: relative;
+    }
+
+    .preco-card.destaque {
+      background: linear-gradient(135deg, rgba(79,195,247,0.1) 0%, rgba(15,52,96,0.5) 100%);
+      border-color: rgba(79,195,247,0.35);
+      box-shadow: 0 0 40px rgba(79,195,247,0.08);
+    }
+
+    .preco-tag {
+      display: inline-block;
+      background: var(--azul-claro);
+      color: var(--azul-escuro);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.8rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+
+    .preco-nome {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--cinza-texto);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .preco-valor {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 3rem;
+      line-height: 1;
+      color: var(--branco);
+      margin-bottom: 0.3rem;
+    }
+
+    .preco-valor sup {
+      font-size: 1.2rem;
+      vertical-align: super;
+      font-weight: 600;
+      color: var(--azul-claro);
+    }
+
+    .preco-periodo {
+      font-size: 0.85rem;
+      color: var(--cinza-texto);
+      margin-bottom: 2rem;
+    }
+
+    .preco-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+
+    .preco-items li {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.9rem;
+      color: var(--cinza-texto);
+    }
+
+    .preco-items li::before {
+      content: '✓';
+      color: var(--azul-claro);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .btn-comprar {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: var(--azul-claro);
+      color: var(--azul-escuro);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.9rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.25s;
+    }
+
+    .btn-comprar:hover {
+      background: var(--azul-brilho);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(79,195,247,0.4);
+    }
+
+    .btn-comprar.outline {
+      background: transparent;
+      color: var(--azul-claro);
+      border: 1px solid rgba(79,195,247,0.4);
+    }
+
+    .btn-comprar.outline:hover {
+      background: rgba(79,195,247,0.08);
+      box-shadow: none;
+    }
+
+    .preco-aviso {
+      margin-top: 2rem;
+      font-size: 0.82rem;
+      color: var(--cinza-texto);
+      opacity: 0.6;
+    }
+
+    /* ── FAQ ── */
+    .faq {
+      background: rgba(15,52,96,0.12);
+      border-top: 1px solid rgba(79,195,247,0.08);
+    }
+
+    .faq-inner {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .faq-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid rgba(79,195,247,0.08);
+    }
+
+    .faq-pergunta {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 1.4rem 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--branco);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      transition: color 0.2s;
+    }
+
+    .faq-pergunta:hover { color: var(--azul-claro); }
+
+    .faq-icon {
+      color: var(--azul-claro);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+      font-style: normal;
+    }
+
+    .faq-item.aberto .faq-icon { transform: rotate(45deg); }
+
+    .faq-resposta {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+
+    .faq-item.aberto .faq-resposta { max-height: 300px; }
+
+    .faq-resposta p {
+      font-size: 0.92rem;
+      color: var(--cinza-texto);
+      line-height: 1.7;
+      padding-bottom: 1.4rem;
+    }
+
+    /* ── CTA FINAL ── */
+    .cta-final {
+      padding: 7rem 4rem;
+      background: var(--gradiente);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-final::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 50% 100%, rgba(79,195,247,0.12) 0%, transparent 60%);
+    }
+
+    .cta-final-content { position: relative; z-index: 1; }
+
+    .cta-final h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+    }
+
+    .cta-final h2 em {
+      font-style: normal;
+      color: var(--azul-claro);
+    }
+
+    .cta-final p {
+      font-size: 1.05rem;
+      color: var(--cinza-texto);
+      margin-bottom: 2.5rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--preto);
+      border-top: 1px solid rgba(79,195,247,0.08);
+      padding: 2.5rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: gap;
+    }
+
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--branco);
+      letter-spacing: 0.06em;
+    }
+
+    .footer-logo span { color: var(--azul-claro); }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--cinza-texto);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--azul-claro); }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--cinza-texto);
+      opacity: 0.5;
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVO ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .hero-stat { display: none; }
+      .section { padding: 4rem 1.5rem; }
+      .problema-grid,
+      .diferencial-inner,
+      .preco-cards { grid-template-columns: 1fr; gap: 2rem; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .cta-final { padding: 5rem 1.5rem; }
+      footer { padding: 2rem 1.5rem; flex-direction: column; gap: 1.2rem; text-align: center; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+
+    @media (max-width: 560px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">FISC<span>US</span></div>
+    <a href="https://pay.kirvano.com/9f25e902-1f69-47aa-95b4-fe60d46949a4" class="nav-cta">Adquirir agora →</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Early adopter — R$147 por ano</div>
+      <h1>Estude com<br><em>método e controle.</em><br>Seja aprovado.</h1>
+      <p>FISCUS é o sistema de gestão de estudos feito exclusivamente para concurseiros que levam a preparação a sério. Registre, organize e evolua — tudo em um só lugar.</p>
+      <div class="hero-actions">
+        <a href="https://pay.kirvano.com/9f25e902-1f69-47aa-95b4-fe60d46949a4" class="btn-primary">
+          Quero o FISCUS
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <span class="hero-note">✓ Download imediato &nbsp;✓ Windows</span>
+      </div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">100%</div>
+    </div>
+  </section>
+
+  <!-- PROBLEMA -->
+  <section class="section problema">
+    <div class="problema-grid">
+      <div class="reveal">
+        <div class="section-label">O problema</div>
+        <h2 class="section-title">A maioria estuda.<br>Poucos <em>gerenciam</em> os estudos.</h2>
+        <p class="section-sub">Não basta ter disciplina. Sem controle sobre o que você estudou, errou e revisou, você repete erros e perde tempo com o que já domina.</p>
+        <div class="dores">
+          <div class="dor-item">
+            <div class="dor-icon">📋</div>
+            <div class="dor-texto">
+              <strong>Planilhas que viram caos</strong>
+              Começam organizadas, mas se tornam um labirinto impossível de manter.
+            </div>
+          </div>
+          <div class="dor-item">
+            <div class="dor-icon">🔁</div>
+            <div class="dor-texto">
+              <strong>Revisões esquecidas</strong>
+              Você estuda, esquece, e repete do zero — sem saber o que precisa revisar.
+            </div>
+          </div>
+          <div class="dor-item">
+            <div class="dor-icon">📉</div>
+            <div class="dor-texto">
+              <strong>Evolução invisível</strong>
+              Sem dados, você não sabe se está progredindo ou rodando em círculos.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay: 0.15s">
+        <div class="destaque-card">
+          <div class="destaque-quote">
+            "Concurseiro que não controla o estudo <em>trabalha o dobro</em> para chegar ao mesmo lugar."
+          </div>
+          <p class="destaque-detalhe">O FISCUS foi construído para resolver exatamente isso: dar a você visibilidade total sobre sua preparação, de forma simples e eficiente.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divisor">
+    <div class="divisor-line"></div>
+    <div class="divisor-text">O que o FISCUS faz por você</div>
+    <div class="divisor-line"></div>
+  </div>
+
+  <!-- FUNCIONALIDADES -->
+  <section class="section features">
+    <div class="features-header reveal">
+      <div class="section-label">Funcionalidades</div>
+      <h2 class="section-title">Tudo que você precisa.<br><em>Nada que você não usa.</em></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">📚</div>
+        <div class="feature-title">Registro de Estudos</div>
+        <p class="feature-desc">Registre cada sessão com disciplina, assunto, horas e PDF de referência. Histórico completo da sua preparação.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.08s">
+        <div class="feature-icon">✏️</div>
+        <div class="feature-title">Caderno de Exercícios</div>
+        <p class="feature-desc">Lance questões resolvidas com gabarito e comentários. Identifique padrões de erro e evolua nas disciplinas que mais importam.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.16s">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Controle de Revisões</div>
+        <p class="feature-desc">Alertas automáticos nos marcos de 30, 60 e 90 dias. Nunca mais deixe um assunto aprendido cair no esquecimento.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.24s">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Relatórios Detalhados</div>
+        <p class="feature-desc">Visualize horas por disciplina, taxa de acerto, e evolução ao longo do tempo. Dados reais para decisões reais.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.32s">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Diagnóstico Inteligente</div>
+        <p class="feature-desc">O FISCUS analisa seus dados e aponta onde você precisa focar. Pontos fracos, fortes e prioridades sempre atualizados.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.40s">
+        <div class="feature-icon">💾</div>
+        <div class="feature-title">Backup Automático</div>
+        <p class="feature-desc">Seus dados salvos localmente, com backup diário automático. Segurança total sem depender de internet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIFERENCIAL -->
+  <section class="section diferencial">
+    <div class="diferencial-inner">
+      <div class="reveal">
+        <div class="section-label">Por que o FISCUS</div>
+        <h2 class="section-title">Feito para<br><em>concurseiros fiscais.</em></h2>
+        <p class="section-sub">Não é uma ferramenta genérica. O FISCUS foi desenvolvido por quem entende o universo dos concursos fiscais — com foco nas disciplinas certas e no método que funciona.</p>
+        <div class="diferencial-lista">
+          <div class="dif-item">
+            <div class="dif-num">01</div>
+            <div class="dif-content">
+              <strong>Roda no seu computador</strong>
+              <span>Instalação local, sem depender de internet para estudar. Seus dados ficam com você.</span>
+            </div>
+          </div>
+          <div class="dif-item">
+            <div class="dif-num">02</div>
+            <div class="dif-content">
+              <strong>Interface limpa e direta</strong>
+              <span>Sem distrações, sem recursos inúteis. Abriu o app, começou a estudar.</span>
+            </div>
+          </div>
+          <div class="dif-item">
+            <div class="dif-num">03</div>
+            <div class="dif-content">
+              <strong>Evolução contínua</strong>
+              <span>Atualizações automáticas com melhorias baseadas no uso real de concurseiros.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay:0.15s">
+        <div class="section-label">Inclui</div>
+        <div class="dores" style="margin-top:1rem">
+          <div class="dor-item"><div class="dor-icon">🖥️</div><div class="dor-texto"><strong>Aplicativo Desktop para Windows</strong>Download e instalação simples, sem configuração técnica.</div></div>
+          <div class="dor-item"><div class="dor-icon">🔐</div><div class="dor-texto"><strong>Licença para 1 computador</strong>Use em sua máquina principal com ativação fácil.</div></div>
+          <div class="dor-item"><div class="dor-icon">📥</div><div class="dor-texto"><strong>Atualizações gratuitas por 1 ano</strong>Todas as melhorias e novidades sem custo adicional.</div></div>
+          <div class="dor-item"><div class="dor-icon">📧</div><div class="dor-texto"><strong>Suporte via e-mail</strong>Atendimento direto para dúvidas e problemas técnicos.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREÇO -->
+  <section class="section preco">
+    <div class="preco-inner">
+      <div class="reveal">
+        <div class="section-label">Planos</div>
+        <h2 class="section-title">Investimento único.<br><em>Resultado ao longo do ano.</em></h2>
+        <p class="section-sub" style="margin: 0.8rem auto 0; text-align:center">Menos de R$0,50 por dia para ter controle total da sua preparação.</p>
+      </div>
+      <div class="preco-cards reveal">
+        <div class="preco-card">
+          <div class="preco-nome">MENSAL</div>
+          <div class="preco-valor"><sup>R$</sup>19<span style="font-size:1.5rem">,90</span></div>
+          <div class="preco-periodo">por mês</div>
+          <ul class="preco-items">
+            <li>Acesso completo ao FISCUS</li>
+            <li>Atualizações incluídas</li>
+            <li>Suporte por e-mail</li>
+          </ul>
+          <a href="https://pay.kirvano.com/9f25e902-1f69-47aa-95b4-fe60d46949a4" class="btn-comprar outline">Assinar mensal</a>
+        </div>
+        <div class="preco-card destaque">
+          <div class="preco-tag">✦ EARLY ADOPTER — OFERTA LIMITADA</div>
+          <div class="preco-nome">ANUAL</div>
+          <div class="preco-valor"><sup>R$</sup>147</div>
+          <div class="preco-periodo">por ano · equivale a R$12,25/mês</div>
+          <ul class="preco-items">
+            <li>Acesso completo ao FISCUS</li>
+            <li>Atualizações por 12 meses</li>
+            <li>Suporte por e-mail</li>
+            <li>Preço de early adopter garantido</li>
+          </ul>
+          <a href="https://pay.kirvano.com/9f25e902-1f69-47aa-95b4-fe60d46949a4" class="btn-comprar">Garantir por R$147 →</a>
+        </div>
+      </div>
+      <p class="preco-aviso reveal">Pagamento processado com segurança pela Kirvano. Após a confirmação, você recebe o download e a chave de ativação por e-mail.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section faq">
+    <div class="faq-inner">
+      <div class="faq-header reveal">
+        <div class="section-label">Dúvidas frequentes</div>
+        <h2 class="section-title">Perguntas <em>e respostas</em></h2>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-pergunta">O FISCUS funciona sem internet? <em class="faq-icon">+</em></button>
+          <div class="faq-resposta"><p>Sim. O FISCUS é instalado localmente no seu computador e funciona 100% offline no dia a dia. A internet é necessária apenas para ativação da licença e para receber atualizações.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-pergunta">Em qual sistema operacional funciona? <em class="faq-icon">+</em></button>
+          <div class="faq-resposta"><p>Atualmente o FISCUS está disponível somente para Windows (64 bits). Versões para outros sistemas podem ser lançadas futuramente.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-pergunta">Posso usar em mais de um computador? <em class="faq-icon">+</em></button>
+          <div class="faq-resposta"><p>Cada licença permite ativação em 1 computador ativo. Caso precise migrar para outro PC, o suporte pode auxiliar na transferência da licença.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-pergunta">Meus dados ficam seguros? <em class="faq-icon">+</em></button>
+          <div class="faq-resposta"><p>Seus dados ficam salvos localmente no seu computador, sem envio para nenhum servidor. O FISCUS realiza backup automático diário na pasta Documentos/FISCUS/backups.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-pergunta">O que acontece quando a licença vence? <em class="faq-icon">+</em></button>
+          <div class="faq-resposta"><p>Ao vencer, o FISCUS entra em modo leitura por 15 dias — você ainda acessa seus dados mas não pode registrar novas informações. Após esse período, é necessário renovar para continuar usando.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-pergunta">Como funciona o suporte? <em class="faq-icon">+</em></button>
+          <div class="faq-resposta"><p>O suporte é feito por e-mail em fiscusconcursos@gmail.com. O atendimento é realizado em dias úteis com retorno em até 24 horas.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final">
+    <div class="cta-final-content reveal">
+      <h2>Sua aprovação começa<br>com <em>controle real</em> dos estudos.</h2>
+      <p>Junte-se aos primeiros usuários do FISCUS e garanta o preço de early adopter.</p>
+      <a href="https://pay.kirvano.com/9f25e902-1f69-47aa-95b4-fe60d46949a4" class="btn-primary" style="display:inline-flex; font-size:1.05rem; padding:1rem 2.5rem">
+        Quero o FISCUS agora
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">FISC<span>US</span></div>
+    <div class="footer-links">
+      <a href="mailto:fiscusconcursos@gmail.com">Suporte</a>
+      <a href="#">Política de Privacidade</a>
+      <a href="#">Termos de Uso</a>
+    </div>
+    <div class="footer-copy">© 2025 FISCUS — Concursos Públicos</div>
+  </footer>
+
+  <script>
+    // FAQ accordion
+    document.querySelectorAll('.faq-pergunta').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item')
+        const aberto = item.classList.contains('aberto')
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('aberto'))
+        if (!aberto) item.classList.add('aberto')
+      })
+    })
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible')
+          observer.unobserve(e.target)
+        }
+      })
+    }, { threshold: 0.12 })
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+  </script>
+
+</body>
+</html>
